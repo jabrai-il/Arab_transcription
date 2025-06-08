@@ -7,6 +7,8 @@ class ArabicText(LinkedQueue):
         def __init__(self, parent, node):
             self._node = node
             self._parent = parent
+            # Ajouter un attribut index pour faciliter le lookahead
+            self.index = parent._find_index(node)
 
         def char(self):
             return self._node._ele
@@ -34,6 +36,20 @@ class ArabicText(LinkedQueue):
                 ele = ele.prev()
                 val -= 1
             return ele
+            
+        def get_lookahead(self, offset=1):
+            """Retourne le caractère à la position offset sans avancer le curseur"""
+            if offset <= 0:
+                return self.char()
+            
+            # Utiliser la méthode next() pour obtenir le caractère à la position offset
+            lookahead = self
+            for _ in range(offset):
+                lookahead = lookahead.next()
+                if lookahead is None:
+                    return None
+            
+            return lookahead.char()
 
         def is_blank(self):
             return self == " "
@@ -53,6 +69,10 @@ class ArabicText(LinkedQueue):
         def is_word_start(self):
             return self.prev() == " " or (not self.prev())
 
+        def is_phrase_start(self):
+            return (not self.prev()) or (not self.prev().prev()) or self.prev().prev() == " "
+        
+        
         def preceeded(self, n):
             out = ""
             ele = self
@@ -104,6 +124,22 @@ class ArabicText(LinkedQueue):
         super().__init__()
         for c in text:
             self.enqueue(c)
+        self.cursor = None
+        self._state_stack = []  # Pour sauvegarder et restaurer l'état
+
+    def _find_index(self, node):
+        """Trouve l'index d'un nœud dans la file"""
+        if node is None:
+            return -1
+        
+        current = self._head
+        index = 0
+        while current is not None:
+            if current == node:
+                return index
+            current = current._next
+            index += 1
+        return -1
 
     def _make_position(self, node):
         if node is None:
@@ -118,6 +154,20 @@ class ArabicText(LinkedQueue):
 
     def before(self, p):
         return self._make_position(p._node._prev)
+
+    def get_state(self):
+        """Retourne l'état actuel de l'itérateur"""
+        if self.cursor is None:
+            return None
+        return self.cursor._node
+
+    def set_state(self, state):
+        """Restaure l'état de l'itérateur"""
+        if state is None:
+            self.cursor = None
+        else:
+            self.cursor = self._make_position(state)
+        return self.cursor
 
     def __iter__(self):
         cursor = self.first()
