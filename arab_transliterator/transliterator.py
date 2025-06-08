@@ -268,7 +268,7 @@ class ArabTransliterator:
                         out.append("w")
 
                 elif caracter.prev().is_mid():
-                    if len(out) > 2 and (not out[-2] == "l-"):
+                    if len(out) >= 2 and (not out[-2] == "l-"):
                         out.append(self.get(str(caracter.prev())))
 
             # handle the rest
