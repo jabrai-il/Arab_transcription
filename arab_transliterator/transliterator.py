@@ -190,7 +190,7 @@ class ArabTransliterator:
             # handle alif maksura
             elif caracter == alphabet.ALIF_MAKSURA:
                 if caracter.prev() == alphabet.FATHA:
-                    out[-1] = "\u00E1"
+                    out[-1] = "ā"
                 continue
 
             # handle alif with maddah above

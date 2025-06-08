@@ -61,7 +61,7 @@ def test_transliterator():
         print_comparison(arabic_text, transliterated_text)
     
     # Test avec un texte personnalisé (pour tests rapides pendant le développement)
-    custom_text = "اللهم صل على محمد ﷺ"
+    custom_text = "اللهُمَّ صَلِّ عَلَى مُحَمَّدٍ ﷺ"
     print("Test personnalisé:")
     transliterated_text = transliterator.translate(custom_text)
     print_comparison(custom_text, transliterated_text)
